@@ -1,3 +1,6 @@
+"use client"
+
+import { Hint } from "@/components/hint";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -6,11 +9,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useGetSingleWorkspace } from "@/features/workspaces/api/use-get-single-workspace";
-import { useWorkspaceId } from "@/hooks/use-workspace-id";
-import { Doc } from "../../../../../convex/_generated/dataModel";
 import { ChevronDown, ListFilter, SquarePen } from "lucide-react";
-import { Hint } from "@/components/hint";
+import { useState } from "react";
+import { Doc } from "../../../../../convex/_generated/dataModel";
+import { InviteModal } from "./invite-modal";
+import { PreferencesModal } from "./preferences-modal";
 
 interface WorkspaceHeaderProps {
   workspace: Doc<"workspaces">;
@@ -21,7 +24,14 @@ export const WorkspaceHeader = ({
   workspace,
   isAdmin,
 }: WorkspaceHeaderProps) => {
+
+    const [preferencesOpen, setPreferencesOpen] = useState(false);
+    const [inviteOpen, setInviteOpen] = useState(false);
+    
   return (
+    <>
+    <InviteModal open={inviteOpen} setOpen={setInviteOpen} name={workspace.name} joinCode = {workspace.joinCode}/>
+    <PreferencesModal open={preferencesOpen} setOpen={setPreferencesOpen} initialValue={workspace.name}/> 
     <div className="flex items-center justify-between px-4 h-[49px] gap-0.5">
       <DropdownMenu>
         {/* DropdownMenuTrigger 안에 Button이 있는데 이는 hydration 에러를 유발하기 때문에 asChild으로 명시 */}
@@ -50,14 +60,14 @@ export const WorkspaceHeader = ({
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 className="cursor-pointer py-2 "
-                onClick={() => {}}
+                onClick={() => setInviteOpen(true)}
               >
                 Invite People to {workspace.name}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 className="cursor-pointer py-2 "
-                onClick={() => {}}
+                onClick={() => setPreferencesOpen(true)}
               >
                 Preferences
               </DropdownMenuItem>
@@ -78,5 +88,6 @@ export const WorkspaceHeader = ({
         </Hint>
       </div>
     </div>
+    </>
   );
 };
